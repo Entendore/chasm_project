@@ -1,0 +1,29 @@
+; ==========================================
+; PROGRAM: BEC_TIME_CRYSTAL_QMEM.chasmUC
+; ==========================================
+ORG 0x1800
+
+START:
+    LOAD_MOL R1, RB87_GAS
+    LASER_COOL R1, D2_LINE
+    EVAPORATE_BEC R1
+    CMP_FLAG CONDENSED
+    JNZ BEC_FAIL
+
+    FESHBACH_RESONANCE R1, R1, 155G
+    ASSOCIATE_BEC R1, R1
+    SPIN_POLARIZE R2, UP
+    APPLY_SOC R2, 10_THz
+
+    FLOQUET_DRIVE R2, 1.0_GHz, 5_kV_m
+    INIT_TIME_CRYSTAL R2, 1ms
+    CMP_FLAG TIME_CRYSTAL
+    JNZ TC_FAIL
+
+    HEAT 300K
+    WAIT 24h
+    MEASURE_PHASE_MARGIN R2
+    JZ TC_MELTED
+
+    OUT R2, QUANTUM_MEMORY_CORE
+    HALT

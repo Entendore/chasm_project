@@ -1,0 +1,26 @@
+; ==========================================
+; PROGRAM: SYNTH_ASPIRIN.chasm
+; ==========================================
+ORG 0x0000
+
+START:
+    SET_PH 2.0
+    LOAD_MOL SOLV, H2O_ETHER
+    LOAD_MOL R1, C7H6O3    ; Salicylic Acid
+    LOAD_MOL R2, C4H6O3    ; Acetic Anhydride
+    LOAD_MOL CAT, H2SO4
+
+    MIX R1, R2
+    CATALYZE CAT, VESSEL
+    HEAT 350K
+    STIR 300
+    WAIT 60s
+
+REACTION_CHECK:
+    CMP_EQUIL 0.95
+    JNE REACTION_CHECK
+
+    COOL 298K
+    EXTRACT R4, C9H8O4_SOLID
+    OUT R4
+    HALT
